@@ -15,12 +15,16 @@ class CityNotFoundError(Exception):
         print("%s does not exist" % city)
 
 
+def preprocessOfCities(city):
+    return city.replace('İ', 'I').replace('ı', 'i').upper()
+
+
 # Implement this function to read data into an appropriate data structure.
 def build_graph(path):
     cities = pd.read_csv(path, encoding='utf-8')
 
-    startCities = list((map(lambda city: city.replace('İ', 'I').replace('ı', 'i').upper(), cities["city1"])))
-    destinationCities = list((map(lambda city: city.replace('İ', 'I').replace('ı', 'i').upper(), cities["city2"])))
+    startCities = list(cities["city1"].apply(preprocessOfCities))
+    destinationCities = list(cities["city2"].apply(preprocessOfCities))
     distances = list(cities["distance"])
 
     unStartCities = startCities + destinationCities
@@ -44,36 +48,30 @@ def uniform_cost_search(graph, start, end):
     path = list()
     queue = PriorityQueue()
     queue.put((0, start))
-
     while queue:
         cost, node = queue.get()
-        # if node in path:
-        #    path.remove(-1)
-        # else:
-        #    path.append(node)
 
         if node not in visited:
             visited.add(node)
             if node == end:
-                # routeDisp = path[0]
-                # for i in range(1, len(path)):
-                #    routeDisp += " -> " + path[i]
+                print(path)
+                routeDisp = start
                 print(f"The minimum distance between {start} and {end} is {cost} km.")
-                # print(f"The route to be followed between {start} and {end} \n{routeDisp}")
+                print(f"The route to be followed between {start} and {end} \n{routeDisp}")
                 return
 
             for neighbor in graph[node]:
                 if neighbor not in visited:
                     total_cost = cost + distance[node, neighbor]
                     queue.put((total_cost, neighbor))
-                    print(f"NODE: {node} NEIGHBOR: {neighbor} DISTANCE {distance[node, neighbor]}")
+                    print(f"LAST NODE: {node} NEIGHBOR: {neighbor} DISTANCE {distance[node, neighbor]}")
+            # print(f"NEW NODE {queue.queue[0][1]}")
 
 
 def chooseCities(path, graphOfCities):
     cities = pd.read_csv(path, encoding='utf-8')
-    allCities = set(cities["city1"])
-    allCities.update(cities["city2"])
-    allCities = set(map(lambda city: city.replace('İ', 'I').replace('ı', 'i').upper(), allCities))
+    allCities = set(cities["city1"].apply(preprocessOfCities))
+    allCities.update(cities["city2"].apply(preprocessOfCities))
     print("ALL START CITIES %s" % allCities)
     while True:
         startCity = input("Please, enter your start city : ").replace('İ', 'I').replace('ı', 'i').upper()
