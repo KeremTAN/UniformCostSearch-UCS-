@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
 from collections import defaultdict
 from queue import PriorityQueue
-
 import pandas as pd
 
 
@@ -45,7 +39,6 @@ def build_graph(path):
 # Implement this function to perform uniform cost search on the graph.
 def uniform_cost_search(graph, start, end):
     visited = set()
-    path = list()
     queue = PriorityQueue()
     queue.put((0, start))
     while queue:
@@ -54,18 +47,13 @@ def uniform_cost_search(graph, start, end):
         if node not in visited:
             visited.add(node)
             if node == end:
-                print(path)
-                routeDisp = start
                 print(f"The minimum distance between {start} and {end} is {cost} km.")
-                print(f"The route to be followed between {start} and {end} \n{routeDisp}")
                 return
 
             for neighbor in graph[node]:
                 if neighbor not in visited:
                     total_cost = cost + distance[node, neighbor]
                     queue.put((total_cost, neighbor))
-                    print(f"LAST NODE: {node} NEIGHBOR: {neighbor} DISTANCE {distance[node, neighbor]}")
-            # print(f"NEW NODE {queue.queue[0][1]}")
 
 
 def chooseCities(path, graphOfCities):
